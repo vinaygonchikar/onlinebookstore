@@ -7,8 +7,7 @@
 
 #### To View First Front Page Design of this website <a href="https://shashirajraja.github.io/onlinebookstore/WebContent/index.html" target="_blank">Click Here</a><br>
 <span style="color:blue">**This Website is built for following purpose:-**</span>
-- For Selling books online.
-- Maintaining books selling history.
+
 - Adding and managing books.
 - User Friendly.
 - For Implemention of Generic Servlets in Java.
