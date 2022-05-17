@@ -3,7 +3,7 @@
 ![onlinebookstore](https://user-images.githubusercontent.com/34605595/137615096-8447d32d-bddc-4f13-a8ed-3c0f4dd5e04e.png)
 <br/><b style="color:red">Welcome to Online Book Store</b>
 
-<b>NOTE:- The Project Files are kept under <a href="https://github.com/shashirajraja/onlinebookstore/tree/gh-pages">gh-pages</a> and <a href="https://github.com/shashirajraja/onlinebookstore/tree/J2EE">J2EE</a> Branch!</b><br/>
+
 
 #### To View First Front Page Design of this website <a href="https://shashirajraja.github.io/onlinebookstore/WebContent/index.html" target="_blank">Click Here</a><br>
 <span style="color:blue">**This Website is built for following purpose:-**</span>
