@@ -1,0 +1,53 @@
+name: Archive-GitHub-Branch
+on:
+  workflow_dispatch:
+
+jobs:
+  Archive-GitHub-Branch:
+    if: |
+      github.ref_name != 'master' && github.ref_type == 'branch' && github.event_name == 'workflow_dispatch'   
+    runs-on: ubuntu-latest 
+    steps:
+  
+      - uses: actions/checkout@v2
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - name: Who started this workflow
+        run: |
+          echo "This workflow is started by ${{ github.actor }}" 
+          ARCHIVE_TAG_NAME="archive/${{ github.ref_name }}-${{ steps.date.outputs.date }}"
+
+      - name: Info
+        run: |
+          echo "The branch to  ${{ github.ref_name }} "
+          echo "The Tag name is archive/${{ github.ref_name }}-${{ steps.date.outputs.date }} "
+          echo "The tag message is for repository name is ${{ github.event.repository.name }} &  branch name is ${{ github.ref_name }} "
+          
+      - name: Tag the github.ref_name branch 
+        run: |
+          git tag -a archive/${{ github.ref_name }}-${{ steps.date.outputs.date }} -m "repository name is ${{ github.event.repository.name }} &  branch name is ${{ github.ref_name }}"
+
+      - name: Push the tag
+        run: |
+          git push origin archive/${{ github.ref_name }}-${{ steps.date.outputs.date }}
+
+      - name: Disbale Branch protection rules for github.ref_name
+        run: |
+          gh api \
+            --method DELETE \
+            -H "Accept: application/vnd.github.v3+json" \
+            /repos/${{ github.repository }}/branches/${{ github.ref_name }}/protection
+
+
+      - name: Deleting the github.ref_name branch 
+        run: |
+          git push origin --delete ${{ github.ref_name }}
+
+# Post slack message about job status
+      - name: Post to a Slack channel
+        if: always()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ github.workflow }} ||| in ${{ github.event.repository.name }} repository  ||| is a ${{ job.status }} ||| click below url to see logs ||| ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' ${{ secrets.SLACK_WEBHOOK }}
