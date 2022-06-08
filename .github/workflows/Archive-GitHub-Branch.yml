@@ -52,7 +52,7 @@ jobs:
 
       - name: Deleting the github.ref_name branch 
         run: |
-          git push origin --delete ${{ github.ref_name }}
+          git push https://${{ secrets.PUSH_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git --delete ${{ github.ref_name }}
 
 # Post slack message about job status
       - name: Post to a Slack channel
