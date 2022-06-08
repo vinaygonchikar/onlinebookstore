@@ -39,7 +39,7 @@ jobs:
 
       - name: Push the tag
         run: |
-          git push https://${{ secrets.PASS_TOKEN }}@github.com/${{ github.repository }}.git --tags
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git --tags
 
       - name: Disbale Branch protection rules for github.ref_name
         run: |
