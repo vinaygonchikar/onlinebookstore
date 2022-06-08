@@ -25,11 +25,13 @@ jobs:
           echo "The branch to archived is   ${{ github.ref_name }} "
           echo "The Tag name is archive/${{ github.ref_name }}-${{ steps.date.outputs.date }} "
           echo "The tag message is for repository name is ${{ github.event.repository.name }} &  branch name is ${{ github.ref_name }} "
-          
+
+#chnage mail id
+
       - name: Tag the github.ref_name branch 
         run: |
-          git config --global user.email "githubactions@homedepot.com"
-          git config --global user.name "githubaction"
+          git config --global user.email "vinaygonchikar@gmail.com.com"
+          git config --global user.name "vinaygonchikar"
           git tag -a archive/${{ github.ref_name }}-${{ steps.date.outputs.date }} -m "repository name is ${{ github.event.repository.name }} &  branch name is ${{ github.ref_name }}"
 
       - name: Push the tag
