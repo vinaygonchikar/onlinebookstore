@@ -26,7 +26,7 @@ jobs:
           echo "The Tag name is archive/${{ github.ref_name }}-${{ steps.date.outputs.date }} "
           echo "The tag message is for repository name is ${{ github.event.repository.name }} &  branch name is ${{ github.ref_name }} "
 
-chnage mail id
+
 
       - name: Tag the github.ref_name branch 
         run: |
