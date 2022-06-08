@@ -48,7 +48,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             /repos/${{ github.repository }}/branches/${{ github.ref_name }}/protection
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_TEMP }}
+          GITHUB_TOKEN: ${{ secrets.PUSH_GITHUB_TOKEN }}
 
       - name: Deleting the github.ref_name branch 
         run: |
