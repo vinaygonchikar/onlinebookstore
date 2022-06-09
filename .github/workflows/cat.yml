@@ -11,7 +11,7 @@ jobs:
 
       - name: create shell script 
         run: |
-          cat << EoF > ./auto-merge-from-master-to-feature.sh
+          cat <<EOF> ./auto-merge-from-master-to-feature.sh
           #!/bin/bash
           # set -x
           git checkout master
