@@ -11,86 +11,84 @@ jobs:
 
       - shell: bash
         run: |
-          cat << EOF > auto-merge-from-master-to-feature.sh
-          #!/bin/bash
-          # set -x
-          git checkout master
-          git pull
-          git branch
-          git checkout master
-          # dispaly all varaible 
-          echo "---------------------Displaying all varaibles --------------------------------"
+          touch auto-merge-from-master-to-feature.sh
+          echo "#!/bin/bash" >> auto-merge-from-master-to-feature.sh
+          echo "# set -x" >> auto-merge-from-master-to-feature.sh
+          echo "git checkout master" >> auto-merge-from-master-to-feature.sh
+          echo "git pull" >> auto-merge-from-master-to-feature.sh
+          echo "git branch" >> auto-merge-from-master-to-feature.sh
+          echo "git checkout master" >> auto-merge-from-master-to-feature.sh
+          echo "# dispaly all varaible " >> auto-merge-from-master-to-feature.sh
+          echo "echo "---------------------Displaying all varaibles --------------------------------"" >> auto-merge-from-master-to-feature.sh
+          echo "echo "  TAG is $TAG"" >> auto-merge-from-master-to-feature.sh
+          echo "echo "  repository is $repository"" >> auto-merge-from-master-to-feature.sh
+          echo "echo "  workflow is $workflow"" >> auto-merge-from-master-to-feature.sh
+          echo "echo "  server_url is $server_url"" >> auto-merge-from-master-to-feature.sh
+          echo "echo "   run_id is $run_id"" >> auto-merge-from-master-to-feature.sh
 
-          echo "  TAG is $TAG"
-          echo "  repository is $repository"
-          echo "  workflow is $workflow"
-          echo "  server_url is $server_url"
-          echo "   run_id is $run_id"
-
-          echo "---------------------counting number of feature branch --------------------------------"
-          #count number feature branch that matches patter "feature-"
-          NO_FEATURE_BRANCH=$(git branch -r | grep "feature-" | wc -l)
-          echo "Total number of Feature branch are '$NO_FEATURE_BRANCH"
-          COUNT=1
-          echo "---------------------entering into while loop --------------------------------"
-          while [ $COUNT -le $NO_FEATURE_BRANCH ]     
-          do  
-              echo "---------------------stroring  to which feature  branch need to merge ----"
-            echo "Welcone $COUNT st feature branch"  
-              FEATURE_BRANCH_NAME=$(git branch -r | grep "feature-" | cut -d'/' -f2 | head -$COUNT | tail -1) 
-              echo "Target branch name is $FEATURE_BRANCH_NAME"  
-          # raise a pull request to feature banch from master   
-              echo "---------------------sending pull request  --------------------------------"
-              gh pr create --title "merge from master after Release $TAG" --body "pull request sent by GitHub action" --base $FEATURE_BRANCH_NAME --head master
-              PULL_REQUEST_STATUS=$(echo $?)
-          # if pull request is successful the store pull request number
-              echo "---------------------store pull request number-----------------------------"
-              if [ "$PULL_REQUEST_STATUS" -eq 0 ]
-              then
-                  PULLREQUEST_NO=$(gh pr view master | head -10 | grep "number:" | cut -d':' -f2 | xargs echo -n)
-                  PULLREQUEST_NO_STATUS=$(echo $?)
-                  echo "the pull request number is $PULLREQUEST_NO"
-          # if storing pull request number is successful then accept that pull request
-                  if [ "$PULLREQUEST_NO_STATUS" -eq 0 ]
-                  then     
-                      gh pr merge $PULLREQUEST_NO --auto -m  
-                      MERGE_STATUS=$(echo $?)    
-          # store  job status in variable to be used in while sending slack message
-                      echo "---------------------checking merge status---------------------------"
-                      if [ "$MERGE_STATUS" -eq 0 ]
-                      then 
-                          MERGE_JOB_STATUS=$(echo "success") 
-                      else
-                          MERGE_JOB_STATUS=$(echo "failed")
-                      fi
-                      echo "the merge from master to $FEATURE_BRANCH_NAME is $MERGE_JOB_STATUS "            
-          # check status for pom.xml file present in repo or not 
-                      ls -la | grep pom.xml  
-                      POM_XML_STATUS=$(echo $?)    
-          # if merge is successful to bring pom version back to brach name 
-          # the below step will be executed only if pom.xml file present & merge is successful
-                      if [ "$MERGE_STATUS" -eq 0 ] && [ $POM_XML_STATUS -eq 0 ]
-                      then     
-                          git config --global user.email "githubactions@homedepot.com"
-                          git config --global user.name "githubaction"
-                          echo "checkout to  $FEATURE_BRANCH_NAME branch"
-                          git checkout $FEATURE_BRANCH_NAME
-                          git pull
-                          mvn versions:set -DnewVersion=$FEATURE_BRANCH_NAME-SNAPSHOT -DprocessAllModules -DgenerateBackupPoms=false
-                          git add .
-                          git commit -m "Updated Pom version back to branch name after merge from master"
-                          git push https://$GITHUB_TOKEN@github.com/$repository.git
-                      fi
-                      echo "---------------------post slack message about merge status--------------"
-                      curl -X POST -H 'Content-type: application/json' --data '"text":"'$workflow' ||| in '$repository' repository  ||| merge from master to '$FEATURE_BRANCH_NAME' is '$MERGE_JOB_STATUS' ||| click below url to see logs ||| '$server_url'/'$repository'/actions/runs/'$run_id'"' $SLACK_WEBHOOK
-                  fi    
-              else
-                  echo "---------------------post slack message about merge status--------------"
-                  curl -X POST -H 'Content-type: application/json' --data '"text":"'$workflow' ||| in '$repository' repository  |||merge from master to '$FEATURE_BRANCH_NAME' is failed ||| click below url to see logs ||| '$server_url'/'$repository'/actions/runs/'$run_id'"' $SLACK_WEBHOOK
-              fi
-              COUNT=$((COUNT+1))
-          done
-          EOF
+          echo "echo "---------------------counting number of feature branch --------------------------------"" >> auto-merge-from-master-to-feature.sh
+          echo "#count number feature branch that matches patter "feature-"" >> auto-merge-from-master-to-feature.sh
+          echo "NO_FEATURE_BRANCH=$(git branch -r | grep "feature-" | wc -l)" >> auto-merge-from-master-to-feature.sh
+          echo "echo "Total number of Feature branch are '$NO_FEATURE_BRANCH"" >> auto-merge-from-master-to-feature.sh
+          echo "COUNT=1" >> auto-merge-from-master-to-feature.sh
+          echo "echo "---------------------entering into while loop --------------------------------"" >> auto-merge-from-master-to-feature.sh
+          echo "while [ $COUNT -le $NO_FEATURE_BRANCH ]" >> auto-merge-from-master-to-feature.sh     
+          echo "do" >> auto-merge-from-master-to-feature.sh  
+          echo "    echo "---------------------stroring  to which feature  branch need to merge ----"" >> auto-merge-from-master-to-feature.sh
+          echo "	echo "Welcone $COUNT st feature branch"" >> auto-merge-from-master-to-feature.sh  
+          echo "    FEATURE_BRANCH_NAME=$(git branch -r | grep "feature-" | cut -d'/' -f2 | head -$COUNT | tail -1)" >> auto-merge-from-master-to-feature.sh 
+          echo "    echo "Target branch name is ${FEATURE_BRANCH_NAME}"" >> auto-merge-from-master-to-feature.sh  
+          echo "# raise a pull request to feature banch from master" >> auto-merge-from-master-to-feature.sh   
+          echo "    echo "---------------------sending pull request  --------------------------------"" >> auto-merge-from-master-to-feature.sh
+          echo "    gh pr create --title "merge from master after Release ${TAG}" --body "pull request sent by GitHub action" --base ${FEATURE_BRANCH_NAME} --head master" >> auto-merge-from-master-to-feature.sh
+          echo "    PULL_REQUEST_STATUS=$(echo $?)" >> auto-merge-from-master-to-feature.sh
+          echo "# if pull request is successful the store pull request number" >> auto-merge-from-master-to-feature.sh
+          echo "    echo "---------------------store pull request number-----------------------------"" >> auto-merge-from-master-to-feature.sh
+          echo "    if [ "$PULL_REQUEST_STATUS" -eq 0 ]" >> auto-merge-from-master-to-feature.sh
+          echo "    then" >> auto-merge-from-master-to-feature.sh
+          echo "        PULLREQUEST_NO=$(gh pr view master | head -10 | grep "number:" | cut -d':' -f2 | xargs echo -n)" >> auto-merge-from-master-to-feature.sh
+          echo "        PULLREQUEST_NO_STATUS=$(echo $?)" >> auto-merge-from-master-to-feature.sh
+          echo "        echo "the pull request number is $PULLREQUEST_NO"" >> auto-merge-from-master-to-feature.sh
+          echo "# if storing pull request number is successful then accept that pull request" >> auto-merge-from-master-to-feature.sh
+          echo "        if [ "$PULLREQUEST_NO_STATUS" -eq 0 ]" >> auto-merge-from-master-to-feature.sh
+          echo "        then     " >> auto-merge-from-master-to-feature.sh
+          echo "            gh pr merge ${PULLREQUEST_NO} --auto -m  " >> auto-merge-from-master-to-feature.sh
+          echo "            MERGE_STATUS=$(echo $?)    " >> auto-merge-from-master-to-feature.sh
+          echo "# store  job status in variable to be used in while sending slack message" >> auto-merge-from-master-to-feature.sh
+          echo "            echo "---------------------checking merge status---------------------------"" >> auto-merge-from-master-to-feature.sh
+          echo "            if [ "$MERGE_STATUS" -eq 0 ]" >> auto-merge-from-master-to-feature.sh
+          echo "            then " >> auto-merge-from-master-to-feature.sh
+          echo "                MERGE_JOB_STATUS=$(echo "success") " >> auto-merge-from-master-to-feature.sh
+          echo "            else" >> auto-merge-from-master-to-feature.sh
+          echo "                MERGE_JOB_STATUS=$(echo "failed")" >> auto-merge-from-master-to-feature.sh
+          echo "            fi" >> auto-merge-from-master-to-feature.sh
+          echo "            echo "the merge from master to ${FEATURE_BRANCH_NAME} is $MERGE_JOB_STATUS "" >> auto-merge-from-master-to-feature.sh            
+          echo "# check status for pom.xml file present in repo or not" >> auto-merge-from-master-to-feature.sh 
+          echo "            ls -la | grep pom.xml" >> auto-merge-from-master-to-feature.sh  
+          echo "            POM_XML_STATUS=$(echo $?)" >> auto-merge-from-master-to-feature.sh    
+          echo "# if merge is successful to bring pom version back to brach name" >> auto-merge-from-master-to-feature.sh 
+          echo "# the below step will be executed only if pom.xml file present & merge is successful" >> auto-merge-from-master-to-feature.sh
+          echo "            if [ "$MERGE_STATUS" -eq 0 ] && [ $POM_XML_STATUS -eq 0 ]" >> auto-merge-from-master-to-feature.sh
+          echo "            then" >> auto-merge-from-master-to-feature.sh     
+          echo "                git config --global user.email "githubactions@homedepot.com"" >> auto-merge-from-master-to-feature.sh
+          echo "                git config --global user.name "githubaction"" >> auto-merge-from-master-to-feature.sh
+          echo "                echo "checkout to  ${FEATURE_BRANCH_NAME} branch"" >> auto-merge-from-master-to-feature.sh
+          echo "                git checkout ${FEATURE_BRANCH_NAME}" >> auto-merge-from-master-to-feature.sh
+          echo "                git pull" >> auto-merge-from-master-to-feature.sh
+          echo "                mvn versions:set -DnewVersion=${FEATURE_BRANCH_NAME}-SNAPSHOT -DprocessAllModules -DgenerateBackupPoms=false" >> auto-merge-from-master-to-feature.sh
+          echo "                git add ." >> auto-merge-from-master-to-feature.sh
+          echo "                git commit -m "Updated Pom version back to branch name after merge from master"" >> auto-merge-from-master-to-feature.sh
+          echo "                git push https://${GITHUB_TOKEN}@github.com/${repository}.git" >> auto-merge-from-master-to-feature.sh
+          echo "            fi" >> auto-merge-from-master-to-feature.sh
+          echo "            echo "---------------------post slack message about merge status--------------"" >> auto-merge-from-master-to-feature.sh
+          echo "            curl -X POST -H 'Content-type: application/json' --data '{"text":"'${workflow}' ||| in '${repository}' repository  ||| merge from master to '${FEATURE_BRANCH_NAME}' is '${MERGE_JOB_STATUS}' ||| click below url to see logs ||| '${server_url}'/'${repository}'/actions/runs/'${run_id}'"}' ${SLACK_WEBHOOK}" >> auto-merge-from-master-to-feature.sh
+          echo "        fi" >> auto-merge-from-master-to-feature.sh    
+          echo "    else" >> auto-merge-from-master-to-feature.sh
+          echo "        echo "---------------------post slack message about merge status--------------"" >> auto-merge-from-master-to-feature.sh
+          echo "        curl -X POST -H 'Content-type: application/json' --data '{"text":"'${workflow}' ||| in '${repository}' repository  |||merge from master to '${FEATURE_BRANCH_NAME}' is failed ||| click below url to see logs ||| '${server_url}'/'${repository}'/actions/runs/'${run_id}'"}' ${SLACK_WEBHOOK}" >> auto-merge-from-master-to-feature.sh
+          echo "    fi" >> auto-merge-from-master-to-feature.sh
+          echo "    COUNT=$((COUNT+1))" >> auto-merge-from-master-to-feature.sh
+          echo "done" >> auto-merge-from-master-to-feature.sh
       - name: view shell script
         run: |
           cat auto-merge-from-master-to-feature.sh
