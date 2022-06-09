@@ -38,10 +38,10 @@ jobs:
               echo "---------------------stroring  to which feature  branch need to merge ----"
             echo "Welcone $COUNT st feature branch"  
               FEATURE_BRANCH_NAME=$(git branch -r | grep "feature-" | cut -d'/' -f2 | head -$COUNT | tail -1) 
-              echo "Target branch name is ${FEATURE_BRANCH_NAME}"  
+              echo "Target branch name is $FEATURE_BRANCH_NAME"  
           # raise a pull request to feature banch from master   
               echo "---------------------sending pull request  --------------------------------"
-              gh pr create --title "merge from master after Release ${TAG}" --body "pull request sent by GitHub action" --base ${FEATURE_BRANCH_NAME} --head master
+              gh pr create --title "merge from master after Release $TAG" --body "pull request sent by GitHub action" --base $FEATURE_BRANCH_NAME --head master
               PULL_REQUEST_STATUS=$(echo $?)
           # if pull request is successful the store pull request number
               echo "---------------------store pull request number-----------------------------"
@@ -53,7 +53,7 @@ jobs:
           # if storing pull request number is successful then accept that pull request
                   if [ "$PULLREQUEST_NO_STATUS" -eq 0 ]
                   then     
-                      gh pr merge ${PULLREQUEST_NO} --auto -m  
+                      gh pr merge $PULLREQUEST_NO --auto -m  
                       MERGE_STATUS=$(echo $?)    
           # store  job status in variable to be used in while sending slack message
                       echo "---------------------checking merge status---------------------------"
@@ -63,7 +63,7 @@ jobs:
                       else
                           MERGE_JOB_STATUS=$(echo "failed")
                       fi
-                      echo "the merge from master to ${FEATURE_BRANCH_NAME} is $MERGE_JOB_STATUS "            
+                      echo "the merge from master to $FEATURE_BRANCH_NAME is $MERGE_JOB_STATUS "            
           # check status for pom.xml file present in repo or not 
                       ls -la | grep pom.xml  
                       POM_XML_STATUS=$(echo $?)    
@@ -73,20 +73,20 @@ jobs:
                       then     
                           git config --global user.email "githubactions@homedepot.com"
                           git config --global user.name "githubaction"
-                          echo "checkout to  ${FEATURE_BRANCH_NAME} branch"
-                          git checkout ${FEATURE_BRANCH_NAME}
+                          echo "checkout to  $FEATURE_BRANCH_NAME branch"
+                          git checkout $FEATURE_BRANCH_NAME
                           git pull
-                          mvn versions:set -DnewVersion=${FEATURE_BRANCH_NAME}-SNAPSHOT -DprocessAllModules -DgenerateBackupPoms=false
+                          mvn versions:set -DnewVersion=$FEATURE_BRANCH_NAME-SNAPSHOT -DprocessAllModules -DgenerateBackupPoms=false
                           git add .
                           git commit -m "Updated Pom version back to branch name after merge from master"
-                          git push https://${GITHUB_TOKEN}@github.com/${repository}.git
+                          git push https://$GITHUB_TOKEN@github.com/$repository.git
                       fi
                       echo "---------------------post slack message about merge status--------------"
-                      curl -X POST -H 'Content-type: application/json' --data '{"text":"'${workflow}' ||| in '${repository}' repository  ||| merge from master to '${FEATURE_BRANCH_NAME}' is '${MERGE_JOB_STATUS}' ||| click below url to see logs ||| '${server_url}'/'${repository}'/actions/runs/'${run_id}'"}' ${SLACK_WEBHOOK}
+                      curl -X POST -H 'Content-type: application/json' --data '"text":"'$workflow' ||| in '$repository' repository  ||| merge from master to '$FEATURE_BRANCH_NAME' is '$MERGE_JOB_STATUS' ||| click below url to see logs ||| '$server_url'/'$repository'/actions/runs/'$run_id'"' $SLACK_WEBHOOK
                   fi    
               else
                   echo "---------------------post slack message about merge status--------------"
-                  curl -X POST -H 'Content-type: application/json' --data '{"text":"'${workflow}' ||| in '${repository}' repository  |||merge from master to '${FEATURE_BRANCH_NAME}' is failed ||| click below url to see logs ||| '${server_url}'/'${repository}'/actions/runs/'${run_id}'"}' ${SLACK_WEBHOOK}
+                  curl -X POST -H 'Content-type: application/json' --data '"text":"'$workflow' ||| in '$repository' repository  |||merge from master to '$FEATURE_BRANCH_NAME' is failed ||| click below url to see logs ||| '$server_url'/'$repository'/actions/runs/'$run_id'"' $SLACK_WEBHOOK
               fi
               COUNT=$((COUNT+1))
           done
