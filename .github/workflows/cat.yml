@@ -1,15 +1,14 @@
-name: CAT
+name: hello
 on:
   push:
 
 jobs:
-  CAT:
+  hello:
     runs-on: ubuntu-latest 
     steps:
   
       - uses: actions/checkout@v2
 
-      - name: create shell script 
       - shell: bash
         run: |
           cat << EOF > auto-merge-from-master-to-feature.sh
