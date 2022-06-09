@@ -1,15 +1,16 @@
-name: Archive-GitHub-Branch
+name: CAT
 on:
   push:
 
 jobs:
-  Archive-GitHub-Branch:
+  CAT:
     runs-on: ubuntu-latest 
     steps:
   
       - uses: actions/checkout@v2
 
       - name: create shell script 
+      - shell: bash
         run: |
           cat << EOF > auto-merge-from-master-to-feature.sh
           #!/bin/bash
