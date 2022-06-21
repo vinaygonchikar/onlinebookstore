@@ -1,0 +1,25 @@
+name: CI-Pre-prod
+
+# manully trigger the job 
+
+on:
+  workflow_dispatch:
+
+# automatically trigger the job if branch starts with featu
+
+  push:
+    branches: 
+      - 'feature**'
+      - '!master'   
+jobs:
+ Pre-prod-Build-Push-GCR:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: 'master'
+          
+      - name: which branch
+        run: |
+          git branch
+          
