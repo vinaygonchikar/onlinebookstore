@@ -1,0 +1,24 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      Bumpversion:
+        description: 'In above drop down slect featue branch u want to merge to master & below select which semantic version to bump'
+        required: true
+        default: 'warning' 
+        type: choice
+        options:
+        - Patch
+        - Minor
+        - Major
+      print_tags:
+        description: 'True to print to STDOUT'
+        required: true 
+        type: boolean 
+jobs:
+  print-tag:
+    runs-on: ubuntu-latest
+    if:  ${{ inputs.print_tags }} 
+    steps:
+      - name: Print the input tag to STDOUT
+        run: echo  The tags are ${{ inputs.tags }} 
