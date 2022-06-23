@@ -11,14 +11,38 @@ on:
         - Patch
         - Minor
         - Major
-      print_tags:
-        description: 'True to print to STDOUT'
+      integration_test:
+        description: 'Select if u want execute  integration test'
+        required: true 
+        type: boolean 
+      backward_merge:
+        description: 'Select if u want execute backward_merge'
+        required: true 
+        type: boolean 
+      archive_branch:
+        description: 'Select if u want execute Archive branch'
         required: true 
         type: boolean 
 jobs:
-  print-tag:
+  integration_test:
     runs-on: ubuntu-latest
-    if:  ${{ inputs.print_tags }} 
+    if:  ${{ inputs. integration_test }} 
     steps:
       - name: Print the input tag to STDOUT
-        run: echo  The tags are ${{ inputs.print_tags }} 
+        run: echo "The tags are hello" 
+  backward_merge:
+    if:  ${{ inputs.backward_merge }} 
+    needs: integration_test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print the input tag to STDOUT
+        run: echo "The tags are hello" 
+  archive_branch:
+    if:  ${{ inputs.archive_branch }} 
+    needs: [integration_test, backward_merge]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print the input tag to STDOUT
+        run: echo "The tags are hello" 
+        
+        
